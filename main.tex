@@ -1,0 +1,758 @@
+% !TEX program = uplatex
+\documentclass[10pt, dvipdfmx,professionalfont]{beamer}
+
+% --- 日本語フォント設定 (MS Pゴシック / MS P明朝) ---
+%\usepackage[deluxe]{otf}
+%\renewcommand{\kanjifamilydefault}{\gtdefault}
+%\renewcommand{\gtdefault}{pspgothic}   % MS Pゴシック
+%\renewcommand{\mcdefault}{pspgothic}   % MS P明朝（必要なら）
+
+% --- 英字フォント (Times New Roman 系) ---
+\usepackage{newtxtext,newtxmath}
+
+% --- テーマ / カラー ---
+%\usetheme{Madrid} % 鶴原先輩のテーマ
+\usetheme{metropolis} % おしゃれなテーマ
+%\usecolortheme{dove}
+%\useinnertheme{} % フレーム内側の設定(block, itemizeなど)
+%\useoutertheme{} % フレーム外側の設定(header, footerなど)
+%\usefonttheme{}
+%\setbeamertemplate{navigation symbols}{}
+
+% --- 数学系パッケージ ---
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{cases}
+\usepackage{cancel}
+\usepackage{physics}
+
+\newcommand{\diff}{\mathrm{d}} % 微分記号をローマン体にする
+\newcommand{\ex}{\mathrm{e}} % 微分記号をローマン体にする
+
+\numberwithin{equation}{section}
+
+% --- 数学未定義オペレータの設定 ---
+% log type
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Supp}{Supp}
+\DeclareMathOperator{\Det}{Det}
+\DeclareMathOperator{\Log}{Log}
+\DeclareMathOperator{\rk}{rk}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\corank}{corank}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\coker}{coker}
+\DeclareMathOperator{\Coker}{Coker}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\arccosh}{arccosh}
+\DeclareMathOperator{\arcsinh}{arcsinh}
+\DeclareMathOperator{\arctanh}{arctanh}
+\DeclareMathOperator{\arcsech}{arcsech}
+\DeclareMathOperator{\arccsch}{arccsch}
+\DeclareMathOperator{\arccoth}{arccoth}
+\DeclareMathOperator{\rot}{rot}
+\DeclareMathOperator{\dom}{dom}
+% limit type
+\DeclareMathOperator*{\argmin}{arg~min}
+\DeclareMathOperator*{\argmax}{arg~max}
+
+% --- 図 / コード ---
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\small,breaklines=true}
+
+\usepackage{caption}
+\captionsetup[figure]{labelsep=space, name={Fig.}}
+
+\usepackage{graphicx}
+\usepackage{here}
+\usepackage{comment}
+
+% --- 参考文献 ---
+%\usepackage{cite}
+\usepackage[style=authoryear, natbib=true, backend=biber, autolang=other]{biblatex}
+\addbibresource{references.bib} % bibファイルをプリアンブルで指定
+
+% --- ハイパーリンク ---
+%\usepackage{hyperref}
+
+% --- 定理環境 ---
+% --- 定理・定義・問題環境の再定義（エラー回避版） ---
+\setbeamertemplate{theorems}[numbered] % 番号を有効化
+% --- ブロックの色設定（グレーに統一） ---
+\setbeamercolor{block title}{bg=gray!30, fg=black}
+\setbeamercolor{block body}{bg=gray!10, fg=black}
+% --- 環境を分けて番号フル ---
+\let\definition\relax
+\let\theorems\relax
+\let\lemma\relax
+\let\example\relax
+\let\problem\relax
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorems}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{problem}{問題}[section]
+\newtheorem{assumption}{Assumption}[section]
+
+\renewcommand{\thedefinition}{\thesection.\arabic{definition}}
+\renewcommand{\thetheorems}{\thesection.\arabic{theorems}}
+\renewcommand{\thelemma}{\thesection.\arabic{lemma}}
+\renewcommand{\theexample}{\thesection.\arabic{example}}
+\renewcommand{\theproblem}{\thesection.\arabic{problem}}
+\renewcommand{\theassumption}{\thesection.\arabic{assumption}}% 問題は「1」「2」という形式にする
+
+\makeatletter
+\renewcommand{\appendix}{\par
+  \setcounter{section}{0}%
+  \setcounter{subsection}{0}%
+  \gdef\presectionname{\appendixname}%
+  \gdef\postsectionname{}%
+  \gdef\thesection{\presectionname\@Alph\c@section\postsectionname}%
+  \gdef\thesubsection{\@Alph\c@section.\@arabic\c@subsection}%
+  %% 追加
+  \renewcommand{\theequation}{\@Alph\c@section.\arabic{equation}}%
+  \renewcommand{\thefigure}{\@Alph\c@section.\arabic{figure}}%
+  \renewcommand{\thetable}{\@Alph\c@section.\arabic{table}}%
+}
+\makeatother
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\renewcommand{\thefigure}{\thesection.\arabic{figure}}
+\renewcommand{\thetable}{\thesection.\arabic{table}}
+
+% --- スライドタイトル / セクション名を frametitle に追加 ---
+\setbeamertemplate{frametitle}{%
+    \nointerlineskip
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.5ex]{frametitle}%
+        \usebeamerfont{frametitle}%
+        \hspace{0.5em}\insertsectionhead\hspace{0.5em}/\hspace{0.5em}\insertframetitle%
+    \end{beamercolorbox}%
+}
+
+% --- 参考文献ページ数のコマンド ---
+% 右下にコメントを表示する設定を起動するコマンド
+\newcommand{\bottomcom}[1]{
+    \setbeamertemplate{background canvas}{
+        \begin{tikzpicture}[remember picture, overlay]
+            \node[anchor=south east, xshift=-0.5cm, yshift=0.2cm] 
+                  at (current page.south east) {\footnotesize \color{darkgray} #1};
+        \end{tikzpicture}
+    }
+}
+
+% 背景設定を元に戻すコマンド
+\newcommand{\stopbottomcom}{
+    \setbeamertemplate{background canvas}{}
+}
+
+% --- メタ情報 ---
+\title{むだ時間自主ゼミ}
+\author[井坂 ~凌]{井坂 ~凌\inst{1}}
+\institute[所属]{\inst{1} 芝浦工業大学}
+\date{\today}
+
+% --- ドキュメント開始 ---
+\begin{document}
+\begin{frame}
+  \titlepage
+\end{frame}
+\begin{frame}{目次}
+  \tableofcontents
+\end{frame}
+
+% ------------------------------------------------------------
+
+% --- 導入セクション ---
+\section{導入} % を付けるとセクションページが出ない
+\bottomcom{参考文献のページ数をここに書く}
+\begin{frame}{背景と目的}
+  \begin{itemize}
+    \item ゼミの簡単な背景：むだ時間の基礎的な内容が必要
+    \item 目的：　　　　　　むだ時間の基礎的な内容を抑える
+    \item 本発表の構成：　　むだ時間の本を読解していく
+    \item 内容：　　　　　　第3章リアプノフに基づく安定性解析
+  \end{itemize}
+\end{frame}
+\stopbottomcom
+
+% ------------------------------------------------------------
+\begin{frame}{使用文献の紹介}
+\begin{columns}[T] % Tで揃え位置を調整, c, t, bも可
+    \begin{column}{0.45\textwidth} % 左側（図）
+      \begin{figure}
+        \includegraphics[width=\textwidth]{fig/Introduction_to_Time-Delay_systems.jpg}
+        \caption{使用文献\citep{Fridman2014-mm}} % captionはfigure環境内かminipage内で
+      \end{figure}
+    \end{column}
+    \begin{column}{0.55\textwidth} % 右側（テキスト）
+        \begin{itemize}
+            \item[著者] Emilia Fridman
+            \item[所属] Tel Aviv University (イスラエル)
+            \item[出生] ソビエト社会主義共和国連邦
+            \item[分野] \footnotesize
+            Robust Control of Time-Delay Systems,\\
+            Networked Control Systems,\\
+            Distributed Parameter Systems,\\
+            Singularly Perturbed Systems,\\
+            Output Regulation
+            \item[\normalsize 学位] \normalsize 数学博士号
+            \item[博論] \footnotesize 『特異摂動時間遅延システムの積分多様体とその応用』
+        \end{itemize}
+        \begin{figure}
+        \includegraphics[width=0.48\textwidth]{fig/Emilia_Fridman.jpg}
+        \caption{Emilia Fridman \citep{wiki:Emilia_Fridman}} % captionはfigure環境内かminipage内で
+      \end{figure}
+    \end{column}
+\end{columns}
+\end{frame}
+
+\bottomcom{\citep[p1-2]{Fridman2014-mm}}
+\begin{frame}[allowframebreaks]{むだ時間システムの定式化}
+\citep[p1]{Fridman2014-mm}のシャワーを浴びる人の例を紹介する．
+
+冷水と温水のミキサーのハンドルを回すことで水温の目標値$T_d$に到達したいと考える．
+\begin{align}
+\dot{\theta}(t) &=a[T_d-T(t-h)],\\
+T(t) &=b\theta(t),\\
+\Rightarrow\dot{T}(t)&= k[T_d-T(t-h)],\quad k \in \mathbb{R}.
+\end{align}
+ただし，ミキサーの出口における水温：$T(t)$，ミキサーの出口から人の頭部まで水が到達するのに必要な定数時間：$h$，温度はハンドルの回転角$\theta(t)$に比例，人がハンドルを回す回転速度は$T_d-T(t)$に比例する．
+
+\framebreak
+目標温度:$T_d=40$，初期温度(履歴切片):$T(t)=15,t\in[-h,0]$，\\
+調整感度:$k=1$，遅延時間:$h=1$
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{fig/sample_1_shower.eps}
+\caption{出力に遅延をもつシャワーの温度制御}
+\end{figure}
+\end{frame}
+\stopbottomcom
+
+% ------------------------------------------------------------
+
+% --- 基礎セクション ---
+\section{基礎}
+\bottomcom{\citep[p14-16]{Fridman2014-mm}}
+\begin{frame}[allowframebreaks]{TDSのクラス1}
+\begin{definition}
+    % 定義を書く
+\textbf{遅延型むだ時間系}(\textit{retarded} TDSs，式\eqref{eq:def1})とは，状態にむだ時間が含まれる場合のむだ時間系である．\\
+    一方，\textbf{中立型むだ時間系}(\textit{neutral type} TDSs，式\eqref{eq:def2})とは，遅延型むだ時間系にむだ時間だけ過去の状態の微分値が含まれる系をいう．
+    \begin{align}
+      \dot{x}(t) &= f(t,x(t),x(t-h)),\quad x(t_0+\theta)=\phi(\theta),\theta \in [-h,0].\label{eq:def1}\\
+      \dot{x}(t) &= f(t,x(t),x(t-h_0),\dot{x}(t-h_1)),\notag\\
+      &\hspace{3cm}x(t_0+\theta)=\phi(\theta),\theta\in[-h,0].\label{eq:def2}
+    \end{align}
+    ただし，$x(t)\in\mathbb{R}^n$は状態を表す．
+  \end{definition}
+
+注意として，本ゼミでは上記のような自律システム(autonomuous system)について扱う．
+\framebreak
+
+むだ時間系は数学において，関数微分方程式の一部として扱われていた背景をもつため，遅延型むだ時間系は遅延型微分方程式(retarded differential equation, RDE)と呼ばれ，中立型むだ時間系は中立型微分方程式(neutral type differential equation, NDE)と呼ばれる．
+
+\begin{example}[遅延型むだ時間系，RDE]
+    % 例を書く
+\begin{equation}
+  \ddot{x}(t) = a\dot{x}(t-h)+bx(t), \quad x(t)\in\mathbb{R}\label{eq:samp1}
+\end{equation}
+先のシャワーを浴びる人の例も遅延型むだ時間系に属する．
+\begin{equation}
+\dot{T}(t)= k[T_d-T(t-h)],\quad k \in \mathbb{R}
+\end{equation}
+\end{example}
+\begin{example}[中立型むだ時間系，NDE]
+    % 例を書く
+\begin{equation}
+  \ddot{x}(t) = a\ddot{x}(t-h)+b\dot{x}(t)+cx(t),\quad x(t)\in\mathbb{R}\label{eq:samp2}
+\end{equation}
+\end{example}
+\end{frame}
+\stopbottomcom
+
+\begin{frame}[allowframebreaks]{TDSのクラス2}
+\begin{center}
+中立型むだ時間系は何を意味するのか？
+\end{center}
+\begin{equation}
+      \textcolor{red}{\dot{x}(t)} = f(t,x(t),x(t-h_0),\textcolor{red}{\dot{x}(t-h_1)})
+\end{equation}
+
+\framebreak
+中立型むだ時間系は何を意味するのか？
+
+「\textbf{伝播(波)の性質を持つエネルギーのやり取り}」があるシステム
+
+"過去の変化率(速度や加速度)"が"現在の変化率"に直接依存する．
+\begin{itemize}
+\item \textbf{分布定数系}：最も古典的かつ物理的に明確な応用先．損失のないケーブルや配管における波動現象を集中定数系としてモデル化する際に現れる．\citet{Hale1993-fz}が最も権威ある文献であり，\citet{Fridman2014-mm}で何回も引用されている．
+\item \textbf{弾性体の振動と衝撃}：機械システムにおいて，質量のある物体同士が衝突したり，弾性波が伝播したりするケース．
+\item \textbf{流体・燃焼システムの圧力波}：航空宇宙工学などで扱う例．
+\item[※] 通信遅延は入力遅延やセンサ情報のフィードバック遅延として扱われることが多いので一般に中立型むだ時間系として扱われない．
+\end{itemize}
+
+PhET Interactive Simulation弦の波\url{https://phet.colorado.edu/en/simulations/wave-on-a-string}
+
+\framebreak
+なぜ「中立型」と呼ぶのか？
+\begin{enumerate}
+\item Retarded(遅延型)：最高階微分に対して，遅延項の階数が低い．動きが「遅らされる」イメージ．
+\item Neutral(中立型)：最高階微分に対して，遅延項も同じ階数．遅延項と現在項が対等(中立)で「波やエコー(反射)が影響を及ぼす」イメージ．
+\item Advanced(前進型)：例えば，1階微分の方程式に2階微分の項にむだ時間が含まれるケース．未来の値に依存する．因果律に反するため力学系では稀．
+\end{enumerate}
+
+
+\framebreak
+方程式\eqref{eq:def1}に対して，時刻$t=0$以降の解を確定させるためには，ベクトル$x(0)$の値だけでは不十分であり，$x(\beta)\,(-h\le\beta\le0)$の初期関数(\textbf{履歴切片}(history segment))が必要である．遅れ型むだ時間系は，現時刻の振る舞いが現時刻とむだ時間分だけ過去の状態によって定まる特徴を持っている．そして系の式\eqref{eq:def1}の特性方程式は
+\begin{equation}
+\det [sI-A_0-A_1e^{-hs}]=0
+\end{equation}
+となるから，一般には極は無限個存在する．
+\end{frame}
+\stopbottomcom
+
+%---------------------------------------------------
+\begin{frame}[allowframebreaks]{問題}
+\begin{problem}[RDEの極配置\citep{Abe2020}]
+次のRDEを考える．
+\begin{align}
+\dot{x}(t)=
+\begin{bmatrix}
+0&1\\
+0&0
+\end{bmatrix}x(t)+\frac{1}{10}
+\begin{bmatrix}
+-3&-1\\
+-2&-4
+\end{bmatrix}x(t-5)\label{eq:prob2-1}
+\end{align}
+式\eqref{eq:prob2-1}の開ループ特性方程式は
+\begin{align*}
+f(s)=s^2+\frac{7}{10}e^{-5s}s+\frac{1}{5}e^{-5s}+\frac{7}{50}e^{-10s}=0
+\end{align*}
+であり，この極配置を求めよ．
+\end{problem}
+$f(s)$は一般的な代数方程式と異なり\textbf{超越方程式}(transcendental function)となるため，\\
+手計算は困難である．
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{fig/sample_2_poles_RDE.eps}
+\caption{RDEの開ループ極配置}
+\end{figure}
+\begin{equation*}
+f(-0.6488+10.2802i)=-0.0213-0.0010i
+\end{equation*}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{安定性解析のための準備}
+$\mathbb{R}$の有界閉区間$[a,b]$に対して，$C([a,b],\mathbb{R}^n)$で$[a,b]$から$\mathbb{R}^n$への連続関数全体のなす線形空間を表す．$C([a,b],\mathbb{R}^n)$には上限ノルム
+\begin{align}
+\|x\|\triangleq \sup_{t\in[a,b]}|x(t)|,\quad (x\in C([a,b],\mathbb{R}^n))
+\end{align}
+を与え，これによるBanach空間と考える．ここで，$|\cdot |$は$\mathbb{R}^n$のあるノルムである．
+\framebreak
+ 
+\begin{definition}
+関数微分方程式とは，$h>0$を定数として
+\begin{equation}
+\dot{x}(t)=f(t,x_t),\quad t\ge t_0\label{eq:def_RDE}
+\end{equation}
+と書かれる微分方程式である．ここで，$f:C([-h,0],\mathbb{R}^n)\supset \dom (f)\to\mathbb{R}^n$はベクトル値汎関数であり，$x_t\in C([-h,0],\mathbb{R}^n)$は連続な未知関数$x$に対して
+\begin{equation}
+x_t(\theta)\triangleq x(t+\theta),\quad (\theta\in [-h,0])
+\end{equation}
+で定義される．本ゼミでは，$x_t$を$x$の$t$における\textbf{履歴切片}(history segment)と呼ぶ．通常は，RDEにおける$f$は連続写像であると仮定する．
+\end{definition}
+\framebreak
+
+微分方程式の\textbf{初期値問題}(initial value problem, Cauchy problem)を考えるとき，RDEでは初期条件が
+\begin{align}
+x_0=\phi(\theta)\in\dom(f)\subset C([-h,0],\mathbb{R}^n)
+\end{align}
+で与えられる．ここで，$\phi$を初期条件における\textbf{初期履歴関数}(initial history function)と呼ぶ．
+
+関数微分方程式の解は
+\begin{itemize}
+\item $\dot{x}(t)=-\sign x(t-h),\quad \phi\equiv0\Rightarrow x(t)=\left\{
+\begin{array}{l}
+1\quad(x(t-h)\ge0)\\
+-1\quad(x(t-h))<0)
+\end{array}\right.
+$\\
+解が存在するとは限らない．
+\item $\dot{x}(t)=\sqrt{|x(t-1)|}, t\ge0,\phi(\theta)=0(\theta\in[-1,0])$の場合，\\
+$x(t)\equiv0$ or $x(t)=\left\{
+\begin{array}{l}
+0\quad(t\in[0,1])\\
+\dfrac{(t-h)^2}{4}\quad(t\ge 1)
+\end{array}\right.$\\
+解が複数存在する．
+\end{itemize}
+\begin{figure}
+\includegraphics[width=0.8\textwidth]{fig/initial_history_function.eps}
+\caption{関数微分方程式の初期値問題の概要}
+\end{figure}
+RDEの初期値問題の解の一意性は，方程式の右辺の$f$の局所Lipschitz連続性により保証される．
+\framebreak
+
+\begin{theorems}[関数微分方程式の解の一意性]
+$f:C([-h,0],\mathbb{R}^n)\supset\dom(f)\to\mathbb{R}^n$は\textcolor{red}{局所Lipschitz連続}かつ$\dom(f)$は開集合とする．このとき，任意の$\phi\in\dom(f)$に対して$a>0$が存在して，RDE\eqref{eq:def_RDE}は初期条件$x_0=\phi$の下で一意的な解$x:[-h,a]\to\mathbb{R}^n$を持つ．
+\end{theorems}
+
+\begin{assumption}[平衡点？]
+RDE\eqref{eq:def_RDE}が次式
+\begin{align}
+\dot{x}(t)=f(t,x_e)=0,x_e(\theta)=x(t+\theta),\quad(\theta\in[-h,0])
+\end{align}
+を満たす$x_e$が存在するとき，$f(t,0)=0$を仮定する．
+これはRDE\eqref{eq:def_RDE}が自明な解$x(t)\equiv0$を有することを保証する．
+\end{assumption}
+この$x_e$は常微分方程式(線形システム・非線形システム)では\textbf{平衡点}(equilibrium point)と呼ばれる．
+\end{frame}
+
+%---------------------------------------------------
+\begin{comment}
+2章は扱わなくなったため削除
+\bottomcom{\citep[p17-19]{Fridman2014-mm}}
+\begin{frame}[allowframebreaks]{初期値(Cauchy)問題}
+有界閉区間$[-h,0]$に対して，$C([-h,0],\mathbb{R}^n)$で$[-h,0]$から$\mathbb{R}^n$への連続関数全体のなす線形空間を表す．$C([-h,0],\mathbb{R}^n)$には最大値ノルム
+\begin{equation}
+\|x_t\|_C=\max_{\theta\in[-h,0]}|x(t+\theta)|
+\end{equation}
+を与え，これによるBanaha空間と考える．ここで，$|\cdot|$は$\mathbb{R}^n$のあるノルムである．次に，事変むだ時間$\tau\in[0,h]$をもつ線形システム
+\begin{equation}
+\dot{x}(t)=A_1(t)x(t-\tau(t)),\quad x(t)\in\mathbb{R}^n
+\end{equation}
+は次式で表現できる．
+\begin{equation}
+\dot{x}(t)=L(t)x_t.
+\end{equation}
+ここで，時変有界線形関数$L(t):C[-h,0]\to\mathbb{R}^n$は，システムの右辺によって定義される．
+
+\end{frame}
+
+
+
+%
+\bottomcom{\citep[p15-16]{Fridman2014-mm}}
+\begin{frame}[allowframebreaks]{逐次解法}
+一般的なTDSの初期値問題を解くために\textbf{遅延微分方程式}(\textit{Retarded Differential Equations, RDEs})と逐次解法の説明をする．
+
+遅れ型むだ時間系を考えるうえで，離散遅延時間$h>0$を含む以下のRDEを考える．
+    \begin{align}
+      \dot{x}(t) &= f(t,x(t),x(t-h)),\quad x(t_0+\theta)=\phi(\theta),\theta \in [-h,0].\label{eq:RDE1}
+    \end{align}
+    ただし，関数$f$はすべての引数において連続であり，第2引数に関して局所的にリップシッツ条件を満たすと仮定する．ただし，$\phi\in C[-h,0]$．式\eqref{eq:RDE1}の解$x(t)$を求めるために必要最小限の初期値は，$t_0$における区間$[t_0-h,t_0]$全体で定義される関数である．$[t_0-h,t_0]$上に定義された初期条件を用いることで，常微分方程式
+    \begin{equation}
+\dot{x}(t)=f(t,x(t),\phi(t-t_0-h)),\quad x(t_0)=\phi(0).
+    \end{equation}
+    の初期値問題の解として，区間$[t_0,t_0+h]$上に解を成せる．
+\framebreak
+
+
+
+
+中立型むだ時間系を考えるうえで，離散遅延時間$h>0$を含む以下のRDEを考える．
+    \begin{align}
+      \dot{x}(t) &= f(t,x(t),x(t-h_0),\dot{x}(t-h_1)),\notag\\
+      &\hspace{3cm}x(t_0+\theta)=\phi(\theta),\theta\in[-h,0].
+    \end{align}
+    ただし，関数$f$はすべての引数において連続であり、第二引数に関して局所的にリップシッツ条件を満たすと仮定する。
+\end{frame}
+\stopbottomcom
+\end{comment}
+
+
+
+% ------------------------------------------------------------
+\section{安定性解析}
+\begin{frame}{はじめに}
+\textbf{\Large はじめに}
+
+ここからは\citet[Chapter 3]{Fridman2014-mm}の『リアプノフ法に基づく安定性解析』を扱う．\\
+これにあたり，いくつかの基礎的な資料(\citet{He-Yuan-2025-vr},\citet{Khalil2017-ep})の適宜参照を推奨する．
+
+\vspace{5mm}
+\textbf{\Large この章の目標}
+\begin{itemize}
+\item Lyapunov-Razumikhin, Lyapunov-Krasovskiiについての定理を理解する
+\item 上記手法でいくつかの練習問題が解ける
+\item 上記手法の問題点について理解する
+\item 上記手法を用いた適応系の安定性解析について理解する(option)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{準備}
+ここから以下のRDE
+\begin{equation}
+\dot{x}(t)=f(t,x_t),\quad t\ge t_0\label{eq:3assume}
+\end{equation}
+ただし，$f:\mathbb{R}\times C[-h,0]\to\mathbb{R}^n$ はすべての変数において連続かつ，2つ目の変数において局所Lipschitz連続を満たす．$f(t,0)=0$であることを仮定する．これにより，式\eqref{eq:3assume}が$x(t)\equiv 0$の自明解を持つことが保証される．
+\begin{definition}
+式\eqref{eq:3assume}の自明解が
+\begin{itemize}
+\item ($t_0$で)一様安定であるとは，$\forall t_0\in\mathbb{R},\forall\varepsilon>0$であるとき，$\delta=\delta(\varepsilon)>0$が存在して，$\|x_{t_0}\|_C<\delta(\varepsilon)$ならば，$t\ge t_0$で$|x(t)|<\varepsilon$．
+\item 一様漸近安定であるとは，一様安定であり，かつ，任意の$\eta>0$に対して
+\item 大域的一様漸近安定
+\end{itemize}
+\end{definition}
+\end{frame}
+
+% ------------------------------------------------------------
+\section{主結果}
+\begin{frame}{主定理}
+  \begin{theorem}[主定理]
+    % 定理を書く
+  \end{theorem}
+\end{frame}
+
+% ------------------------------------------------------------
+\begin{frame}{証明（概略）}
+  \begin{proof}
+    % 証明を書く
+  \end{proof}
+\end{frame}
+
+% ------------------------------------------------------------
+\section{補題}
+\begin{frame}{補題}
+
+\end{frame}
+
+% ------------------------------------------------------------
+\section{数値例}
+\begin{frame}{数値例：簡単な実験}
+  \begin{itemize}
+    \item $n=100$ ランダムベクトルのノルム比較
+    \item 理論の不等式が数値で確認できる
+    \citet{Hei-Tian-1980-wc}
+  \end{itemize}
+\end{frame}
+
+% ------------------------------------------------------------
+\section{図 (TikZ)}
+\begin{frame}{図の例}
+  \begin{tikzpicture}[scale=1]
+    \draw[->] (-0.1,0) -- (3,0) node[right] {$x_1$};
+    \draw[->] (0,-0.1) -- (0,3) node[above] {$x_2$};
+    \draw[thick,->] (0,0) -- (2,1.5);
+  \end{tikzpicture}
+\end{frame}
+
+% ------------------------------------------------------------
+\section{まとめ}
+\begin{frame}{まとめ}
+まとめたいじょ
+\end{frame}
+
+% ------------------------------------------------------------
+\appendix
+
+\section{基礎数学準備}
+
+\bottomcom{\citep[p4-8]{Hei-Tian-1980-wc}}
+\begin{frame}[allowframebreaks]{Banaha空間}
+\begin{definition}
+線形空間$\mathscr{X}$の任意のベクトル$\bm{u}$に実数$\| u \|$が対応していて，次の条件(a)-(d)がみたされているとき，$\mathscr{X}$にノルムが定義されていると良い，$\|\bm{u}\|$を$\bm{u}$の\textbf{ノルム}(norm)という．ただし，(a)-(d)で，$\bm{u}, \bm{v}$は$\mathscr{X}$の任意のベクトル，$\alpha$は任意の複素数である．
+\begin{enumerate}
+\item[a] $\|\bm{u}\| \le0$
+\item[b] $\|\bm{u}\|=0 \Leftrightarrow \bm{u}=0$
+\item[c] $\| \alpha \bm{u}\| = |\alpha| \|\bm{u}\|$
+\item[d] $\|\bm{u}+\bm{v}\|\le\|\bm{u}\|+\| \bm{v}\|\quad\text{(三角不等式)}$
+\end{enumerate}
+\end{definition}
+
+\begin{definition}
+ノルムが定義されている線形空間を\textbf{ノルム空間}という
+\end{definition}
+$\|\bm{u}\| =\sum_{k=1}^n|\zeta_k|,\quad u=(\zeta_1,\zeta_2,\cdots,\zeta_n)$や$\|\bm{u}\|=\sup_{k=1,\cdots,n}|\zeta_k|$など1つの空間に導入しうるノルムはひとつとは限らない．
+
+\framebreak
+\begin{theorem}
+ノルム空間では，和$\bm{u}+\bm{v}$，および積$\alpha\bm{u}$は連続な演算である．すなわち，
+\begin{align}
+\bm{u}_n\to\bm{u},\,\bm{v}_n\to\bm{v}\Rightarrow\bm{u}_n+\bm{v}_n\to\bm{u}+\bm{v},\notag\\
+\bm{u}_n\to\bm{u},\,\alpha_n\to\alpha\Rightarrow\alpha\bm{u}_n\to\bm{u}+\alpha\bm{u}.\notag
+\end{align}
+\end{theorem}
+\begin{proof}
+和については，$\|\bm{u}_n+\bm{v}_n-(\bm{u}+\bm{v})\| \le \|\bm{u}_n-\bm{u}\| + \|\bm{v}_n-\bm{v}\|\to0$．積については，まず$\{\alpha_n\}$は収束列だから有界，すなわち$\|\alpha_n\|\le M$なる$M>0$が存在することに注意する．すると，$\|\alpha_n\bm{u}_n-\alpha \bm{u}\|=\|\alpha_n(\bm{u}_n-\bm{u})+(\alpha_n-\alpha)\bm{u}\|\le |\alpha_n| \|\bm{u}_n-\bm{u}\|+|\alpha_n-\alpha| \|\bm{u}\|\le M\|\bm{u}_n-\bm{u}\| + |\alpha_n-\alpha| \|\bm{u}\| \to0$．
+\end{proof}
+\begin{theorem}
+ノルム空間$\mathscr{X}$のノルムは$\mathscr{X}$上の連続関数である．すなわち，
+\begin{equation}
+\bm{u}_n\to\bm{u}\Rightarrow \| \bm{u}_n\| \to \|\bm{u}\|
+\end{equation}
+\end{theorem}
+
+\begin{definition}[Cauchy(コーシー)列]
+$\mathscr{X}$の点列$\{\bm{u}_n\}$に対して，条件\eqref{eq:cauchy}が成り立つとき，$\{\bm{u}_n\}$は$\mathscr{X}$の\textbf{Cauchy(コーシー)列}であるという．
+\begin{equation}
+\lim_{m, n\to \infty}\|\bm{u}_m-\bm{u}_n\| = 0\label{eq:cauchy}
+\end{equation}
+あるいは，$\mathscr{X}$の点列$\{\bm{u}_n\}$に対して，任意の$\varepsilon>0$に対して，自然数$N$が存在して，
+\begin{equation}
+m,n>N\Rightarrow\|\bm{u_m}-\bm{u_n}\|\varepsilon
+\end{equation}
+が成立することである．
+\end{definition}
+コーシー列は収束値は分からないが収束することが分かる，収束判定の道具といえる．実数体$\mathbb{R}$(または複素数体$\mathbb{C}$)では$\{\bm{u}_n\}$が収束列$\Leftrightarrow$Cauchy列が収束列である．すなわち，$\mathbb{R}$の任意のCauchy列は$\mathbb{R}$の中に極限をもつ．これは$\mathbb{R}$の完備性であって，$\mathbb{R}$の基本的な性質の1つである．同様に$\mathbb{C}$も完備である．しかし，一般のノルム空間では，Cauchy列が収束列であるとは限らない．
+
+\begin{definition}[完備性]
+ノルム空間$\mathscr{X}$で，すべてのCauchy列が収束列であるとき，すなわち，すべてのCauchy列が$\mathscr{X}$の中に極限をもつとき，$\mathscr{X}$は\textbf{完備}であるという．
+\end{definition}
+
+\begin{definition}[Banaha空間]
+完備なノルム空間を\textbf{Banaha}(バナッハ)\textbf{空間}という．
+\end{definition}
+
+ここまでの定義と定理を踏まえれば，実数体$\mathbb{R}$，複素数体$\mathbb{C}$で我々が使っているノルム空間を出ない限りBanaha空間は暗に満たされているみなせるんじゃないか？．ただし，任意の有限次元ノルム空間は完備であることを，$\mathbb{C}$の完備性に基づいて証明するのは後ほど．
+\end{frame}
+
+
+% -----------------------------------------------------------
+
+\bottomcom{\cite[p36-37]{Hei-Tian-1980-wc}}
+\begin{frame}[allowframebreaks]{コンパクト台}
+\begin{definition}[関数の台]
+関数$f:X\to\mathbb{R}$(または$\mathbb{C}$)の定義域$X$における，値が消滅しない部分集合
+\begin{equation}
+\mathrm{supp} f = \{x\in X|f(x)\neq0\}
+\end{equation}
+を\textbf{関数の台}(support)という．$X$が位相空間のときは普通
+\begin{equation}
+\mathrm{supp} f = \overline{\{x\in X|f(x)\neq 0\}}
+\end{equation}
+と定義する(ただし上付きバーは閉包(closure)を表す)．
+\end{definition}
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{fig/supp-new.png}
+\end{figure}
+
+\begin{definition}[コンパクト台]
+コンパクトな台を持つ関数全体の集合を
+\begin{equation}
+C_c(\mathbb{R})=\{f:\mathbb{R}\to\mathbb{C}| \mathrm{supp} f \text{is compact}\}
+\end{equation}
+と書く．ただし，$\mathrm{supp} f = \overline{\{x\in X|f(x)\neq 0\}}$である．
+\end{definition}
+\end{frame}
+
+% ------------------------------------------------------------
+\begin{frame}[allowframebreaks]{}
+\end{frame}
+
+% ------------------------------------------------------------
+
+\bottomcom{\cite[p30]{Hei-Tian-1980-wc}}
+\begin{frame}[allowframebreaks]{Lipschitz条件}
+\begin{definition}[リプシッツ条件(Lipschitz条件)\citep{Kokosugaku}]
+$f(t,x)$を，閉区間$\Omega=\{(t,x)|\, \|t-t_0\| \le a, \|x-x_0\| \le b\}$で定義された連続関数とする．
+ある定数$L$があり，$\Omega$内の任意の2点$(t,x),(t,y)$において
+\begin{equation}
+|f(t,x) - f(t,y)| \le L| x - y |
+\end{equation}
+となるとき，$f$はリプシッツ条件を満たすという．
+\end{definition}
+大雑把にいうと「出力の変動が，入力の変動の定数倍($L$倍)で抑えられる」という条件である．
+\framebreak
+
+以下の微分方程式を考える．
+\begin{equation}
+\left\{
+\begin{array}{ll}
+\dv{x}{t} &=f(t,x)\\
+x(t_0) &=x_0
+\end{array}
+\right.
+\end{equation}
+$t=t_0$における$x$の値(初期値)が与えられている，いわゆる「初期値問題」である．
+
+\begin{example}[解が1つに定まらない例]
+\begin{equation}
+\left\{
+\begin{array}{ll}
+\dv{x}{t} &=3x^{\frac{2}{3}}\\
+x(t_0) &=0
+\end{array}
+\right.
+\end{equation}
+変数分離型の微分方程式なので，定石に従って解くと，
+\begin{align}
+\int \frac{1}{3}x^{-\frac{2}{3}}\diff x &= \int \diff t\\
+x^{\frac{1}{3}} &= t+C
+\end{align}
+となり，$t=0$で$x=0$なので$C=0$となり，よって$x=t^3$となる．一方，$x(t)=0$もまた元の方程式を満たす．これはこの方程式は唯一解が求められないことを意味している．
+\end{example}
+
+\end{frame}
+
+%--------------------------------------------------------------
+\bottomcom{\citep[p286-288]{Hei-Tian-1980-wc}}
+\begin{frame}[allowframebreaks]{Stieltjes積分}
+\textcolor{red}{リーマン積分の一般化らしい．それ以上はわからん．以下途中}
+
+$\mathbb{R}^1$上で定義された複素数値関数$\rho(\lambda)$が条件
+\begin{equation}
+v(\rho)\equiv\sup_{\lambda_0,\lambda_1<\cdots<\lambda_n}\sum_{k=0}^{n-1}|\rho(\lambda_{k+1})-\rho(\lambda_k)|<\infty
+\end{equation}
+を満たすとき，$\rho$は$\mathbb{R}^1$上の\textbf{有界変動関数}であるといい，$v(\rho)$を$\rho$の\textbf{全変動}という．ここで$\sup$は$\lambda_0<\lambda_1<\cdots<\lambda_n$を満たす任意有限個の点$\lambda_1,\cdots,\lambda_n$の上にわたってとる．$\mathbb{R}^1$上の有界な単調関数は有界変動である．
+
+$\mathbb{R}^1$上の有界変動関数$\rho$は$\mathbb{R}^1$上で有界で，$\rho$の不連続点はたかだか可算個である．また，次の極限がすべて存在する:
+\begin{align}
+\rho(\lambda-0)=\varepsilon
+\end{align}
+\end{frame}
+\stopbottomcom
+
+
+
+%--------------------------------------------
+\section{微分方程式}
+\begin{frame}[allowframebreaks]{}
+別資料・参考書籍を参照してください
+\begin{enumerate}
+\item 常微分方程式の解の存在性と一意性
+\item 関数微分方程式の解の存在性と一意性
+\item \fullcite{Hale1993-fz}
+\end{enumerate}
+\end{frame}
+
+%--------------------------------------------
+\section{分布定数系の制御}
+\begin{frame}[allowframebreaks]{}
+分布定数系の制御を考えるうえで，偏微分方程式(PDE)の解の振る舞いと境界制御(Boundary control)が重要なキーワードになります．
+
+別資料・参考書籍を参照してください
+\begin{enumerate}
+\item 偏微分方程式の解の存在性と一意性
+\item \fullcite{A-Bu-2020-pc}
+\item \fullcite{Jia-Na-1980-uj}
+\item \fullcite{Ban-He-1980-kd}
+\end{enumerate}
+\end{frame}
+
+\section{サンプルコード}
+\begin{frame}[allowframebreaks]{}
+ゼミ資料で使用したシミュレーションのサンプルコードを以下で公開しています．
+
+{\small\url{https://github.com/Ryoryoryo-control/Time-Delay_seminar.git}}
+
+検証や参考にご使用ください．
+\end{frame}
+
+% --- 参考文献 ---
+\begin{frame}[allowframebreaks]{参考文献}
+\printbibliography[title=参考文献]
+\end{frame}
+% ------------------------------------------------------------
+
+\end{document}
